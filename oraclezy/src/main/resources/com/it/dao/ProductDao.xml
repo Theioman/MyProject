@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.dao.ProductDao">
+    <resultMap id="productMap" type="com.it.domain.Product">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="cityname" column="cityname"></result>
+        <result property="price" column="price"></result>
+        <result property="desc" column="des"></result>
+    </resultMap>
+    <select id="findAll" resultMap="productMap">
+        select * from p;
+    </select>
+    <insert id="save" parameterType="com.it.domain.Product">
+        insert into p(name,cityname,price,des) values(#{name},#{cityname},#{price},#{desc})
+    </insert>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from p where id=#{id}
+    </delete>
+    <update id="update" parameterType="com.it.domain.Product">
+        update p set name=#{name},cityname=#{cityname},price=#{price},des=#{desc} where id=#{id}
+    </update>
+</mapper>
