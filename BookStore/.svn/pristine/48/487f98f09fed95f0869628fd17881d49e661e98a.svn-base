@@ -1,0 +1,48 @@
+package com.book.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.book.domain.Cart;
+import com.book.domain.CartDetail;
+import com.book.service.vo.CartCommon;
+import com.book.service.vo.Common;
+
+public interface CartDao {
+	/*List<Common> findAllCartDetail(Map<Object,Integer> pageNum);*/
+	
+	List<Common> queryCartByid(Integer id);
+	
+	List<Common> selectDetailOfId(Integer[] ids);
+	
+	Double queryTotalPrice(Integer id);
+	
+	Integer queryDetailNum(Integer id);
+	
+	void delCartDetail(Integer id);
+	
+	Common queryPriceAndNum(Integer id);
+	
+	void addCartBnum(Integer id);
+	
+	Common queryCartDetailById(Integer id);
+	
+	void decreaseCartBnum(Integer id);
+	
+	List<Common> queryCartByBname(Common common);
+	
+	Common selectOfId(Integer[] ids);
+
+	Integer findCidByUid(CartCommon common);
+
+	void addCart(CartCommon common);
+
+	CartDetail findDetail(CartCommon common);
+
+	void addDetail(CartCommon common);
+
+	void updateDetail(CartCommon common);
+	
+	
+
+}

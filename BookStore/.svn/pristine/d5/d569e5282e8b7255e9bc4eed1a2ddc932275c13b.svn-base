@@ -1,0 +1,77 @@
+package com.book.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.book.domain.Book;
+import com.book.service.BookService;
+
+@Controller
+public class BookController {
+	@Autowired
+	private BookService bookService;
+	@RequestMapping("findAllBook.do")
+	public ModelAndView findAllBook(Integer pagenum) {
+		if(pagenum==null||pagenum<=0) {
+			pagenum=1;
+		}
+		ModelAndView mv=new ModelAndView();
+		int page=bookService.findBooksCount()/20;
+		if(page%20>0)page+=1;
+		if(pagenum>page) {
+			pagenum=page;
+		}
+		List<Book> list=bookService.findAllBook(pagenum);
+		mv.addObject("pagenum", pagenum);
+		mv.addObject("page", page);
+		mv.addObject("books", list);
+		mv.setViewName("list");
+		return mv;
+	}
+
+@RequestMapping("toIndex.do")
+public ModelAndView toIndex(HttpSession session){
+	ModelAndView mav=new ModelAndView();
+	List<Book> pythons=bookService.findBookByBtype("Python");
+	System.out.println(pythons.toString());
+	List<Book> javaScripts=bookService.findBookByBtype("JavaScript");
+	List<Book> mathss=bookService.findBookByBtype("数据结构与算法");
+	List<Book> studies=bookService.findBookByBtype("机器学习");
+	List<Book> syss=bookService.findBookByBtype("操作系统");
+	List<Book> sqlss=bookService.findBookByBtype("数据库");
+	
+	session.setAttribute("pythons", pythons);
+	session.setAttribute("javaScripts", javaScripts);
+	session.setAttribute("maths", mathss);
+	session.setAttribute("studies", studies);
+	session.setAttribute("syss", syss);
+	session.setAttribute("sqlss", sqlss);
+	session.setAttribute("is", "1");
+	
+	mav.setViewName("index");
+	
+	return mav;
+	}
+
+	/**
+	 * 跳转到书详情页 并显示相关信息
+	 */
+	@RequestMapping("bookDetail.do")
+	public ModelAndView bookDetail(Integer id) {
+		ModelAndView mv=new ModelAndView();
+		Book book=bookService.findBookById(id);
+		System.out.println(book);
+		mv.addObject("book", book);
+		mv.setViewName("detail");
+		return mv;
+	}
+}

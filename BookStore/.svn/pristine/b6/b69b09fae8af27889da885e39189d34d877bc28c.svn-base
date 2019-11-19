@@ -1,0 +1,19 @@
+package com.book.dao;
+
+import java.util.List;
+
+import com.book.domain.Cart;
+import com.book.service.vo.Common;
+
+
+public interface CartDao {
+	List<Common> queryCartByid(Integer id);
+	
+	Double queryTotalPrice(Integer id);
+	
+	Integer queryDetailNum(Integer id);
+	
+	void delCartDetail(Integer id);
+	
+	Common queryPriceAndNum(Integer id);
+}

@@ -1,0 +1,50 @@
+package com.book.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.book.dao.CartDao;
+import com.book.domain.Cart;
+import com.book.service.vo.CartCommon;
+import com.book.service.vo.Common;
+
+@Service
+public class CartService {
+	@Autowired
+	private CartDao cartDao;
+	public List<Common> queryCartByid(Integer id){
+		return cartDao.queryCartByid(id);
+	}
+	
+	public Double queryTotalPrice(Integer id){
+		return cartDao.queryTotalPrice(id);
+	}
+	
+	public Integer queryDetailNum(Integer id){
+		return cartDao.queryDetailNum(id);
+	}
+	
+	public void delCartDetail(Integer id){
+		cartDao.delCartDetail(id);
+	}
+	
+	public Common queryPriceAndNum(Integer id){
+		return cartDao.queryPriceAndNum(id);
+	}
+
+	public void addToCart(CartCommon common) {
+		Integer cid=cartDao.findCidByUid(common);
+		if(cid==null) {
+			cartDao.addCart(common);
+			cid=common.getId();
+		}
+		common.setCid(cid);
+		System.out.println(cartDao.findDetail(common));
+		if(cartDao.findDetail(common)==null) {
+			cartDao.addDetail(common);
+		}else {
+			cartDao.updateDetail(common);
+		}	
+	}
+	
+}

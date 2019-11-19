@@ -1,0 +1,29 @@
+package com.book.service;
+/**
+ * 用户service
+ * @author hp
+ *
+ */
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.book.dao.UsersDao;
+import com.book.domain.Users;
+
+@Service
+public class UsersService {
+@Autowired
+public UsersDao usersDao;
+/**
+ * 登录
+ * @return
+ */
+public Users login() {
+	return usersDao.login();
+}
+/**
+ * 注册
+ */
+public void register() {
+	usersDao.register();
+}
+}

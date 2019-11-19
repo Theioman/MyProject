@@ -1,0 +1,31 @@
+package com.book.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.book.dao.OrderDao;
+import com.book.domain.Order;
+
+@Service
+public class OrderService {
+	@Autowired
+	private OrderDao orderDao;
+	
+	public void addOrder(Order order) {
+		orderDao.addOrder(order);
+	}
+
+	public List<Order> findAllOrder(Integer pagenum,Integer uid) {
+		Map<String,Integer> map=new HashMap<String,Integer>();
+		map.put("pagenum", pagenum-1);
+		map.put("uid", uid);
+		return orderDao.findAllOrder(map);
+	}
+	
+	public Integer findOrdersCount() {
+		return orderDao.findOrdersCount();
+	}
+}

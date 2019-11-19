@@ -1,0 +1,54 @@
+package com.book.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.book.domain.Book;
+import com.book.service.BookService;
+
+@Controller
+public class BookController {
+	@Autowired
+	private BookService bookService;
+@RequestMapping("findAllBook.do")
+public ModelAndView findAllBook(Integer index) {
+	Map<String,Integer> map=new HashMap();
+	ModelAndView mv=new ModelAndView();
+	List<Book> list=bookService.findAllBook(map);
+	mv.addObject("books", list);
+	mv.setViewName("list");
+	return mv;
+}
+
+@RequestMapping("toIndex.do")
+public ModelAndView toIndex(HttpSession session){
+	ModelAndView mav=new ModelAndView();
+	List<Book> pythons=bookService.findBookByBtype("Python");
+	System.out.println(pythons.toString());
+	List<Book> javaScripts=bookService.findBookByBtype("JavaScript");
+	List<Book> mathss=bookService.findBookByBtype("数据结构与算法");
+	List<Book> studies=bookService.findBookByBtype("机器学习");
+	List<Book> syss=bookService.findBookByBtype("操作系统");
+	List<Book> sqlss=bookService.findBookByBtype("数据库");
+	
+	session.setAttribute("pythons", pythons);
+	session.setAttribute("javaScripts", javaScripts);
+	session.setAttribute("maths", mathss);
+	session.setAttribute("studies", studies);
+	session.setAttribute("syss", syss);
+	session.setAttribute("sqlss", sqlss);
+	session.setAttribute("is", "1");
+	
+	mav.setViewName("index");
+	
+	return mav;
+	}
+}

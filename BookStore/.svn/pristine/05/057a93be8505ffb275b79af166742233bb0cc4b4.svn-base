@@ -1,0 +1,36 @@
+package com.book.domain;
+
+import java.io.Serializable;
+/**
+ * 购物车实体类
+ * @author hp
+ *
+ */
+public class Cart implements Serializable{
+private Integer id;
+private Double totalprice;
+private Integer totalnum;
+public Integer getId() {
+	return id;
+}
+public void setId(Integer id) {
+	this.id = id;
+}
+public Double getTotalprice() {
+	return totalprice;
+}
+public void setTotalprice(Double totalprice) {
+	this.totalprice = totalprice;
+}
+public Integer getTotalnum() {
+	return totalnum;
+}
+public void setTotalnum(Integer totalnum) {
+	this.totalnum = totalnum;
+}
+@Override
+public String toString() {
+	return "Cart [id=" + id + ", totalprice=" + totalprice + ", totalnum=" + totalnum + "]";
+}
+
+}

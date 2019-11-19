@@ -1,0 +1,18 @@
+package com.book.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.book.domain.Order;
+/**
+ * 订单Dao
+ * @author hp
+ *
+ */
+public interface OrderDao {
+void addOrder(Order order);
+
+List<Order> findAllOrder(Map<String, Integer> map);
+
+Integer findOrdersCount();
+}

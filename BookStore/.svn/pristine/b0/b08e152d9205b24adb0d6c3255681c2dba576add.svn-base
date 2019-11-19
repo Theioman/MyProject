@@ -1,0 +1,46 @@
+package com.book.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.book.domain.Order;
+import com.book.service.OrderService;
+
+@Controller
+public class OrderController {
+	@Autowired
+	private OrderService orderService;
+	
+	/**
+	 * 根据页数和用户id分页查询订单信息并跳转到订单页面显示
+	 * @param pagenum
+	 * @param uid
+	 * @return
+	 */
+	@RequestMapping("toOrder.do")
+	public ModelAndView findAllOrder(Integer pagenum,Integer uid) {
+		ModelAndView mv=new ModelAndView();
+		mv.setViewName("user_center_order");
+		if(uid==null||"".equals(uid)) {
+			return mv;
+		}
+		if(pagenum==null||pagenum<=0) {
+			pagenum=1;
+		}
+		int pageCount=orderService.findOrdersCount(uid);
+		int page=pageCount/4;
+		if(pageCount%4!=0||pageCount==0)page+=1;
+		if(pagenum>page) {
+			pagenum=page;
+		}
+		List<Order> list=orderService.findAllOrder(pagenum,uid);
+		mv.addObject("page", page);
+		mv.addObject("pagenum", pagenum);
+		mv.addObject("orders", list);	
+		return mv;
+	}
+}

@@ -1,0 +1,23 @@
+package com.book.dao;
+
+import com.book.domain.Users;
+/**
+ * 用户dao
+ * @author hp
+ *
+ */
+public interface UsersDao {
+/**
+ * 登录 
+ * @return 返回Users，Users为null则登录失败 否则成功
+ */
+Users login();
+/**
+ * 注册
+ */
+void register(Users user);
+/**
+ * 通过username查找用户
+ */
+Users findUserByUserName(String username);
+}

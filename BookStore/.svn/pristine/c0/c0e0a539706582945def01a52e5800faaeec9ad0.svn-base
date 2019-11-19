@@ -1,0 +1,24 @@
+package com.book.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.book.dao.RecentDao;
+import com.book.domain.Recent;
+
+@Service
+public class RecentService {
+	
+	@Autowired 
+	 public RecentDao recentDao;
+	/**
+	 * 查询用户地址信息通过uid
+	 */
+	public List<Recent> selectRecent (Integer uid){
+		return recentDao.selectRecent(uid);
+	}
+
+}

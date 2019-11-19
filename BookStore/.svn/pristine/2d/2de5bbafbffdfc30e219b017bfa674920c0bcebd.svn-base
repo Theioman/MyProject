@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.BookDao">
+ 	<select id="findAllBook" resultType="book" parameterType="java.util.Map">
+ 		select id,bname,bprice,imgpath from book limit #{pagenum},20
+ 	</select>
+ 	<select id="findBooksCount" resultType="int">
+ 		select count(id) from book
+ 	</select>
+ 	<select id="findBookByBtype" parameterType="String" resultType="book">
+ 		select id,bname,bprice,imgpath from book where btype=#{btype} limit 0,4
+ 	</select>
+ </mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.UsersSiteDao">
+	
+ 	<select id="findUsersSiteById" resultType="usersSite" parameterType="Integer">
+ 	     select id,addressee,content,mailCode,phone,uid from address where uid = #{uid}
+ 	</select>
+    
+    <select id="finUsersInfoById" resultType="usersSite" parameterType="Integer">
+         select id,addressee,phone,content from address where uid = #{uid}
+    </select>
+    
+    <update id="updateUsersSiteById" parameterType="usersSite">
+        update address set addressee=#{addressee},content = #{content} , mailcode=#{mailCode} ,phone=#{phone} where uid = #{uid}
+    </update>
+ 	
+ 	<insert id="addUsersSiteById" parameterType="usersSite" >
+ 	    INSERT into address SET addressee = #{addressee},content = #{content}  ,mailcode=#{mailCode}, phone=#{phone},uid =  #{uid}
+  	</insert>
+ </mapper>

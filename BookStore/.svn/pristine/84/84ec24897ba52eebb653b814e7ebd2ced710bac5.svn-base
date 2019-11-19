@@ -1,0 +1,82 @@
+package com.book.service.vo;
+
+public class Common {
+	private String bname;
+	private String bprice;
+	private String imgpath;
+	private Integer cid;
+	private Integer cdid;
+	private Double sbprice;
+
+	private Integer detailnum;
+	private Integer bnum;
+
+	public Common() {
+		super();
+	}
+	
+
+	public Integer getBnum() {
+		return bnum;
+	}
+
+
+	public void setBnum(Integer bnum) {
+		this.bnum = bnum;
+	}
+
+
+	public Double getSbprice() {
+		return sbprice;
+	}
+
+
+	public void setSbprice(Double sbprice) {
+		this.sbprice = sbprice;
+	}
+
+
+	public Integer getDetailnum() {
+		return detailnum;
+	}
+
+
+	public void setDetailnum(Integer detailnum) {
+		this.detailnum = detailnum;
+	}
+
+
+	public Integer getCdid() {
+		return cdid;
+	}
+
+	public void setCdid(Integer cdid) {
+		this.cdid = cdid;
+	}
+
+	public String getBname() {
+		return bname;
+	}
+	public void setBname(String bname) {
+		this.bname = bname;
+	}
+	public String getBprice() {
+		return bprice;
+	}
+	public void setBprice(String bprice) {
+		this.bprice = bprice;
+	}
+	public String getImgpath() {
+		return imgpath;
+	}
+	public void setImgpath(String imgpath) {
+		this.imgpath = imgpath;
+	}
+	public Integer getCid() {
+		return cid;
+	}
+	public void setCid(Integer cid) {
+		this.cid = cid;
+	}
+	
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.OrderDao">
+ 	<resultMap type="Order" id="orderMap">
+ 		<id column="oids" property="id"></id>
+ 		<result column="orderid" property="orderid"/>
+ 		<result column="time" property="time"/>
+ 		<result column="status" property="status"/>
+ 		<result column="totalprice" property="totalprice"/>
+ 		<collection property="orderDetail" ofType="orderdetail">
+ 			<id column="odid" property="id"/>
+ 			<result column="bnum" property="bnum"/>
+ 			<association property="book" javaType="book">
+ 				<id column="bids" property="id"/>
+ 				<result column="bname" property="bname"/>
+ 				<result column="bprice" property="bprice"/>
+ 				<result column="imgpath" property="imgpath"/>
+ 			</association>
+ 		</collection>
+ 	</resultMap>
+ 	<select id="findAllOrder" parameterType="java.util.Map" resultMap="orderMap">
+ 		select o.id oids,o.orderid,o.time,o.status,o.totalprice,
+ 		od.id odid,od.bnum,b.id bids,b.bname,b.bprice,b.imgpath 
+ 		from orders o,orderdetail od,users u,book b 
+ 		where o.id=od.oid and u.id=o.uid and od.bid=b.id and u.id=#{uid} 
+ 		order by o.time desc 
+ 		limit #{pagenum},4 
+ 	</select>
+ 	
+ 	<select id="findOrdersCount" resultType="int" parameterType="int">
+ 		select count(od.id) from orders o,orderdetail od where o.id=od.oid and uid=#{uid}
+ 	</select>
+ 	
+ 	<insert id="addOrder" useGeneratedKeys="true" keyProperty="id" parameterType="com.book.service.vo.Common">
+ 		insert into orders(orderid,status,uid,totalprice) values(#{orderid},1,#{uid},#{totalprice})
+ 	</insert>
+ 	
+ 	<insert id="addOrderDetail" parameterType="java.util.List">
+ 		insert into orderdetail(oid,bid,bnum) values
+ 		<foreach collection="list" index="index" item="item" separator=",">
+ 			( 
+ 			#{item.oid,jdbcType=VARCHAR},
+ 			#{item.bid,jdbcType=INTEGER},
+ 			#{item.bnum,jdbcType=INTEGER}
+ 			)
+ 		</foreach>
+ 	</insert>
+ 	<delete id="deleteCartDetail" parameterType="java.util.List">
+ 		delete from cartdetail where bid in 
+ 		<foreach collection="list" open="(" close=")" separator="," item="item">
+ 		#{item}
+ 		</foreach>
+ 		
+ 	</delete>
+ 	<select id="findInfoByid" parameterType="int" resultType="com.book.service.vo.Common">
+ 		select id bid,bname,imgpath,bprice from book where id=#{bid}
+ 	</select>
+ </mapper>

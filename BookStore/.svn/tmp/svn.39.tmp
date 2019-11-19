@@ -1,0 +1,9 @@
+package com.book.dao;
+
+import java.util.List;
+
+import com.book.domain.Recent;
+
+public interface RecentDao {
+	List<Recent> selectRecent(Integer uid);
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.RecentDao">
+	
+	<!-- <resultMap type="Order" id="orderMap">
+ 		<id column="oids" property="id"></id>
+ 		<result column="orderid" property="orderid"/>
+ 		<result column="time" property="time"/>
+ 		<result column="status" property="status"/>
+ 		<result column="totalprice" property="totalprice"/>
+ 		<collection property="orderdetail" ofType="orderdetail">
+ 			<id column="odid" property="id"/>
+ 			<result column="bnum" property="bnum"/>
+ 			<association property="book" javaType="book">
+ 				<id column="bids" property="id"/>
+ 				<result column="bname" property="bname"/>
+ 				<result column="bprice" property="bprice"/>
+ 				<result column="imgpath" property="imgpath"/>
+ 			</association>
+ 		</collection>
+ 	</resultMap>
+ 	<select id="findAllOrder" parameterType="java.util.Map" resultMap="orderMap">
+ 		select o.id oids,o.orderid,o.time,o.status,o.totalprice, 
+ 		od.id odid,od.bnum,b.id bids,b.bname,b.bprice,b.imgpath 
+ 		from orders o,orderdetail od,users u,book b 
+ 		where o.id=od.oid and u.id=o.uid and od.bid=b.id and u.id=#{uid} 
+ 		limit #{pagenum},2
+ 	</select> -->
+ 	<resultMap type="Recent" id="recentMap">
+ 		<id column="rid" property="id"/>
+ 	    <association property="book" javaType="book">
+ 	    		<id column="id" property="id"></id>
+ 	            <result column="bname" property="bname"/>
+ 				<result column="bprice" property="bprice"/>
+ 				<result column="imgpath" property="imgpath"/>
+ 	    </association>
+ 	</resultMap>
+	
+ 	<select id="selectRecent" resultMap="recentMap" parameterType="Integer">
+ 	     select 
+ 	     r.id rid,
+ 	     b.id,b.bname,b.bprice,b.imgpath 
+ 	     from recent r,book b 
+ 	     where r.bid = b.id and r.uid = #{uid}
+ 	</select>              
+    <insert id="addRecent" parameterType="Integer">
+         insert into recent set uid = #{uid} ,bid=#{bid}
+    </insert>
+    
+    <select id="ifRidIsExists" resultType="boolean" parameterType="Integer">
+        <![CDATA[ select  count(bid) from recent where #{bid} in (select bid from recent where uid = #{uid}) and uid = #{uid} and bid = #{bid}]]>
+    </select>
+ </mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.BookDao">
+ 	<select id="findAllBook" resultType="book" parameterType="java.util.Map">
+ 		select id,bname,bprice,imgpath from book limit #{pagenum},20
+ 	</select>
+ 	<select id="findBooksCount" resultType="int">
+ 		select count(id) from book
+ 	</select>
+ 	<select id="findBookByBtype" parameterType="String" resultType="book">
+ 		select id,bname,bprice,imgpath from book where btype=#{btype} limit 0,4
+ 	</select>
+ 	<select id="findBookById" parameterType="int" resultType="book">
+ 		select id,bname,bprice,imgpath,bdesc,btype from book where id=#{id}
+ 	</select>
+
+ 	
+ 	<select id="queryPriceAndNum" parameterType="Integer" resultType="com.book.service.vo.Common">
+ 		select SUM(bnum) detailnum
+ 		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		and c.uid=#{uid}
+ 	</select>
+
+ 	<select id="findBookByCondition" parameterType="java.util.Map" resultType="book">
+ 		select id,bname,bprice,imgpath from book where bname like "%${condition}%" or btype like "%${condition}%" 
+ 		order by btype 
+ 		limit #{pagenum},20
+ 	</select>
+ 	<select id="findBookByConditionCount" parameterType="java.util.Map" resultType="int">
+ 		select count(id) from book where bname like "%${condition}%" or btype like "%${condition}%" 
+ 	</select>
+ 	<select id="findBookByType" parameterType="java.util.Map" resultType="book">
+ 		select id,bname,bprice,imgpath from book where btype=#{btype} limit #{pagenum},20
+ 	</select>
+ 	<select id="findBookTypeCount" parameterType="String" resultType="int">
+ 		select count(id) from book where btype=#{btype}
+ 	</select>
+
+ </mapper>

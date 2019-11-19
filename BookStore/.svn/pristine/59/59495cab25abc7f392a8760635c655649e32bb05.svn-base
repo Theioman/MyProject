@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.CartDao">
+ <resultMap type="cart" id="cartMost">
+ 	<id property="id" column="cid"></id>
+ 	<result property="totalprice" column="totalprice"></result>
+ 	<result property="totalnum" column="totalnum"></result>
+ 	<collection property="cartDetails" ofType="cartDetail">
+ 		<collection property="books" ofType="Book">
+ 			<result property="bname" column="bname"></result>
+ 			<result property="bprice" column="bprice"></result>
+ 			<result property="imgpath" column="imgpath"></result>
+ 		</collection>
+ 	</collection>
+ </resultMap>
+ 
+ 	<select id="queryCartByid" parameterType="Integer" resultType="com.book.service.vo.Common">
+ 		select b.bname,b.bprice,b.imgpath,cd.id cdid
+		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		and c.uid=#{uid}
+ 	</select>
+ 	
+ 	<select id="queryPriceAndNum" parameterType="Integer" resultType="com.book.service.vo.Common">
+ 		select SUM(bprice) sbprice,count(*) detailnum
+ 		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		and c.uid=#{uid}
+ 	</select>
+ 	
+ 	<select id="queryTotalPrice" parameterType="Integer" resultType="java.lang.Double">
+ 		select SUM(bprice) sbprice
+		from cart c,cartdetail cd,book b,users u
+		where c.id=cd.cid and cd.bid=b.id and u.id=c.uid
+		and uid=#{uid}
+ 	</select>
+ 	
+ 	<select id="queryDetailNum" parameterType="Integer" resultType="Integer">
+ 		select count(*) detailnum
+		from cart c,cartdetail cd,book b,users u
+		where c.id=cd.cid and cd.bid=b.id and u.id=c.uid
+		and uid=#{uid}
+ 	</select>
+ 	
+ 	<delete id="delCartDetail" parameterType="Integer">
+ 		delete from cartdetail where id=#{id}
+ 	</delete>
+ </mapper>

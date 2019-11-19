@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.book.dao.CartDao">
+ <resultMap type="cart" id="cartMost">
+ 	<id property="id" column="cid"></id>
+ 	<result property="totalprice" column="totalprice"></result>
+ 	<result property="totalnum" column="totalnum"></result>
+ 	<collection property="cartDetails" ofType="cartDetail">
+ 		<collection property="books" ofType="Book">
+ 			<result property="bname" column="bname"></result>
+ 			<result property="bprice" column="bprice"></result>
+ 			<result property="imgpath" column="imgpath"></result>
+ 		</collection>
+ 	</collection>
+ </resultMap>
+	<!--  <select id="findAllCartDetail" resultType="com.book.service.vo.Common" parameterType="java.util.Map">
+	 	select b.bname,b.bprice,b.imgpath,cd.id cdid,bnum
+		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		limit #{pagenum},5
+	 </select> -->
+ 	<select id="selectOfId" resultType="com.book.service.vo.Common">
+ 		select SUM(bprice*bnum) totalprice,SUM(bnum) detailnum
+ 		from cart c,users u,cartdetail cd,book b
+ 		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+ 		and cd.id in 
+ 		<foreach collection="array" item="item" open="(" separator="," close=")">
+ 			#{item}
+ 		</foreach>
+ 	</select>
+ 	<select id="selectDetailOfId" resultType="com.book.service.vo.Common">
+ 		select b.id bid,b.bname,b.bprice,b.imgpath,cd.id cdid,cd.bnum
+ 		from cart c,users u,cartdetail cd,book b
+ 		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+ 		and cd.id in 
+ 		<foreach collection="array" item="item" open="(" separator="," close=")">
+ 			#{item}
+ 		</foreach>
+ 	</select>
+ 	<!-- <select id="queryCartByBname" parameterType="com.book.service.vo.Common" resultType="com.book.service.vo.Common">
+ 		select b.bname,b.bprice,b.imgpath,cd.id cdid,bnum,SUM(bprice*bnum) sbprice,sum(bnum)
+		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		and bname like "%${bname}%"
+		GROUP BY  cdid 
+ 	</select> -->
+ 	<select id="queryCartByid" parameterType="Integer" resultType="com.book.service.vo.Common">
+ 		select b.bname,b.bprice,b.imgpath,cd.id cdid,cd.bnum 
+		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		and c.uid=#{uid}
+ 	</select>
+ 	
+ 	<select id="queryPriceAndNum" parameterType="Integer" resultType="com.book.service.vo.Common">
+ 		select SUM(bprice*bnum) sbprice,SUM(bnum) detailnum
+ 		from cart c,users u,cartdetail cd,book b
+		where c.id=cd.cid and c.uid=u.id and cd.bid=b.id
+		and c.uid=#{uid}
+ 	</select>
+ 	
+ 	<select id="queryCartDetailById" parameterType="Integer" resultType="com.book.service.vo.Common">
+ 		select bnum,cd.id cdid,bnum*bprice bbprice
+ 		from cartdetail cd,book b where cd.bid=b.id
+		and cd.id=#{id}
+ 	</select>
+ 	
+ 	<select id="queryTotalPrice" parameterType="Integer" resultType="java.lang.Double">
+ 		select SUM(bprice*bnum) sbprice
+		from cart c,cartdetail cd,book b,users u
+		where c.id=cd.cid and cd.bid=b.id and u.id=c.uid
+		and uid=#{uid}
+ 	</select>
+ 	
+ 	<select id="queryDetailNum" parameterType="Integer" resultType="Integer">
+ 		select SUM(bnum) detailnum
+		from cart c,cartdetail cd,book b,users u
+		where c.id=cd.cid and cd.bid=b.id and u.id=c.uid
+		and uid=#{uid}
+ 	</select>
+ 	
+ 	<delete id="delCartDetail" parameterType="Integer">
+ 		delete from cartdetail where 
+ 		<if test="id !=null or id='' ">
+ 			id=#{id}
+ 		</if>
+ 	</delete>
+
+ 	
+ 	<update id="addCartBnum" parameterType="Integer">
+ 		update cartdetail set bnum=bnum+1 where id=#{id}
+ 	</update>
+ 	
+ 	<update id="decreaseCartBnum" parameterType="Integer">
+ 		update cartdetail set bnum=bnum-1 where id=#{id}
+ 	</update>
+	
+ 	<select id="findCidByUid" parameterType="com.book.service.vo.CartCommon" resultType="int">
+ 		select id from cart where uid=#{uid}
+ 	</select>
+ 	
+ 	<insert id="addCart" parameterType="com.book.service.vo.CartCommon">
+ 		insert into cart(uid) values(#{uid}) 
+ 	</insert>
+ 	
+ 	<select id="findDetail" parameterType="com.book.service.vo.CartCommon" resultType="cartdetail">
+ 		select id,bid,cid,bnum from cartdetail where cid=#{cid} and bid=#{bid}
+ 	</select>
+ 	
+ 	<insert id="addDetail" parameterType="com.book.service.vo.CartCommon">
+ 		insert into cartdetail (bid,cid,bnum) values(#{bid},#{cid},#{bnum})
+ 	</insert>
+ 	
+ 	<update id="updateDetail" parameterType="com.book.service.vo.CartCommon">
+ 		update cartdetail set bnum=bnum+#{bnum} where cid=#{cid} and bid=#{bid}
+ 	</update>
+  </mapper>

@@ -1,0 +1,44 @@
+package com.book.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.book.dao.UsersSiteDao;
+import com.book.domain.UsersSite;
+
+@Service
+public class UsersSiteService {
+	
+	@Autowired 
+	 public UsersSiteDao usersSiteDao;
+	
+	/**
+	 * 查询用户地址信息通过uid
+	 */
+	public UsersSite findUsersSiteById(Integer uid){
+		return usersSiteDao.findUsersSiteById(uid);
+	}
+    
+	/**
+	 * 查询用户个人信息通过uid
+	 * @param uid
+	 * @return
+	 */
+	public Object findUsersInfoById(Integer uid) {
+		// TODO Auto-generated method stub
+		return usersSiteDao.finUsersInfoById(uid);
+	}
+	
+	/**
+	 * 修改用户地址信息
+	 * @param usersSite
+	 */
+	public void updateUsersSiteById(UsersSite usersSite){
+		usersSiteDao.updateUsersSiteById(usersSite);
+	}
+
+	public void addUsersSiteById(UsersSite usersSite) {
+		// TODO Auto-generated method stub
+		usersSiteDao.addUsersSiteById(usersSite);
+	}
+}

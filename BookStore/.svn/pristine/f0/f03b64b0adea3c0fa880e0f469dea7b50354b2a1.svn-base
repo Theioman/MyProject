@@ -1,0 +1,11 @@
+package com.book.dao;
+
+import java.util.List;
+import java.util.Map;
+import com.book.domain.Book;
+
+public interface BookDao {
+	List<Book> findAllBook(Map map);
+	
+	List<Book> findBookByBtype(String Btype);
+}

@@ -1,0 +1,283 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<!DOCTYPE html>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt"%>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>旧生书城-购物车</title>
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/main.css">
+	<script src="<%=request.getContextPath()%>/js/jquery-1.12.4.min.js"></script>
+</head>
+<script type="text/javascript">
+function findCondition(){
+	var condition=$("#condition").val();
+	location.href='<%=request.getContextPath()%>/pageRequest.do?condition='+condition;
+};
+</script>
+<body>
+	<div class="header_con">
+		<div class="header">
+			<div class="welcome fl">欢迎来到旧生书城!</div>
+			<div class="fr">
+				<div class="login_info fl">
+					欢迎您：<em>张 山</em>
+				</div>
+				<div class="login_btn fl">
+				${sessionScope.user==null?"<a href='toLogin.do'>登录</a><span>|</span><a href='toRegister.do'>注册</a>":sessionScope.user.username}
+				</div>
+				<div class="user_link fl">
+					<span>|</span>
+					<a href="<%=request.getContextPath()%>/queryUsersInfo.do">用户中心</a>
+					<span>|</span>
+					<a href="<%=request.getContextPath()%>/toCart.do">我的购物车</a>
+					<span>|</span>
+					<a href="<%=request.getContextPath()%>/toOrder.do?uid=${sessionScope.user.id}">我的订单</a>
+					<span>|</span>
+					${sessionScope.user==null?"":"<a href='exit.do'>退出</a>"}
+				</div>
+			</div>
+		</div>		
+	</div>
+
+	<div class="search_bar clearfix">
+		<a href="<%=request.getContextPath()%>/toIndex.do" class="logo fl"><img src="images/logo.png" style="width: 160px; height: 53px;"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;购物车</div>
+		<div class="search_con fr">
+			<input type="text" class="input_text fl" name="bname" id="condition" placeholder="搜索商品">
+			<input type="button" class="input_btn fr" name="" value="搜索 " onclick="findCondition()">
+		</div>		
+	</div>
+	<!-- <script type="text/javascript">
+		function queryCartByBname(){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/queryCartByBname.do?date="+new Date(),
+				type:"get",
+				data:"bname="+$("#bname").val(),
+				dataType:"json",
+				success:function(data){
+					$("#jieda").empty();
+					$(data).each(function(index,cb){
+						$("#jieda").append("<ul class='cart_list_td clearfix' id='" +cb.cdid+ "'><li class='col01'><input type='checkbox' name='inps' checked></li><li class='col02'><img src='"+cb.imgpath+"'></li><li class='col03'>"+cb.bname+"<br><em>"+cb.bprice+"元</em></li><li class='col04'>册</li><li class='col05'>"+cb.bprice+"元</li><li class='col06'><div class='num_add'><a href='javascript:;' class='add fl' onclick='addCartBnum("+ cb.cdid +")'>+</a><input type='text' class='num_show fl' value='"+cb.bnum+"' id=inp'"+cb.cdid+"'>	<a href='javascript:;' class='minus fl' onclick='decreaseCartBnum("+cb.cdid+")'>-</a>	</div></li><li class='col07'>"+cb.bprice+"元</li><li class='col08'><a href='#' onclick='delCartDetail('"+cb.cdid+"')'>删除</a></li></ul>");
+					});
+				}
+			});
+		}
+	</script> -->
+
+	<div class="total_count">全部商品<em id="detailNum">${detailNum}</em>件</div>	
+	<ul class="cart_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+	<div id="jieda">
+		<c:forEach items="${Commons}" var="ca">
+			<ul class="cart_list_td clearfix" id="${ca.cdid}">
+				
+				<li class="col01"><input type="checkbox" name="ids" checked onchange="checkYS()"></li>
+				
+				
+				<li class="col02"><img src="${ca.imgpath}"></li>
+				<li class="col03">${ca.bname}<br><em>${ca.bprice}元</em></li>
+				<li class="col04">册</li>
+				<li class="col05">${ca.bprice}元</li>
+				<li class="col06">
+					<div class="num_add">
+						<a href="javascript:;" class="add fl" onclick="addCartBnum(${ca.cdid})">+</a>
+						<input type="text" class="num_show fl" value="${ca.bnum}" id="inp${ca.cdid}" onblur="updateTest(${ca.cdid})">	
+						<a href="javascript:;" class="minus fl" onclick="decreaseCartBnum(${ca.cdid})">-</a>	
+					</div>
+				</li>
+				<li class="col07"><fmt:formatNumber type="number" value="${ca.bprice*ca.bnum}" maxFractionDigits="2"></fmt:formatNumber>元</li>
+				<li class="col08"><a href="#" onclick="delCartDetail(${ca.cdid})">删除</a></li>
+			</ul>
+		</c:forEach>
+	</div>
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="" checked="checked" id="checkboxInput"></li>
+		<li class="col02">全选</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em id="totalPrice">${totalPrice}</em><br>共计<b id="detailNum2">${detailNum}</b>件商品</li>
+		<li class="col04"><a onclick="toBuy()">去结算</a></li>
+	</ul>
+	<script type="text/javascript">
+	function updateTest(id){
+		alert($("#inp"+id).val());
+		$.ajax({
+			url:"${pageContext.request.contextPath}/updateTest.do?date="+new Date().getTime(),
+			type:"get",
+			data:{"bnum":$("#inp"+id).val(),"id":id},
+			dataType:"json",
+			success:function(data){
+				$("#inp"+id).val(data.bnum);
+				$("#bookp"+data.cdid).html(data.bbprice+"元");
+			}
+		})
+		checkYS();
+		$.ajax({
+			url:"${pageContext.request.contextPath}/queryPriceAndNum.do?date="+new Date().getTime(),
+			type:"get",
+			data:"id="+id,
+			dataType:"json",
+			success:function(data){
+				$("#detailNum").html(data.detailnum);
+				
+			}
+		});
+	}
+	function toBuy(){
+		var data = new Array();
+		$("input[name='ids']:checked").each(function (i) {
+			var id = $(this).parent("li").parent("ul").attr("id");
+	        data[i]=id; 
+	    });
+		location.href='/BookStore/toPlaceOrder.do?array='+data.join(',');
+		/* axios({
+			method:'get',
+			url:'{pageContext.request.contextPath}/toPlaceOrder.do',
+			params:{array:array.toString()}
+		}) */
+	}
+
+	function checkYS(){
+		location.reload();
+			var data = new Array();
+			$("input[name='ids']:checked").each(function (i) {
+				var id = $(this).parent("li").parent("ul").attr("id");
+		        data[i]=id; 
+		    });
+		    console.log(data);
+		    $.ajax({
+		    	type:"post",
+		    	datatype:"json",
+		    	 contentType: 'application/json;charset=utf-8',//这个必须是这个格式
+                 url:"${pageContext.request.contextPath}/selectOfId.do?date="+new Date().getTime(),
+                 data:JSON.stringify(data),
+                 success:function (data) {
+                	 $("#totalPrice").html(data.totalprice);
+                	 $("#detailNum2").html(data.detailnum);
+                 },
+             }); 
+	    }
+		$("#checkboxInput").on("click",function(){
+			if(this.checked){
+				$("#jieda ul .col01").find("input[name='ids']").prop("checked",true);
+			}else{
+				$("#jieda ul .col01").find("input[name='ids']").prop("checked",false);
+			}
+			checkYS();
+		})
+	</script>
+	<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2016 北京旧生信息技术有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+	<script type="text/javascript">
+		 function delCartDetail(id){
+<<<<<<< .mine
+			 if(confirm("你确定删除吗")){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/delCartDetail.do?date="+new Date(),
+				type:"get",
+				data:"id="+id,
+				dataType:"json",
+				success:function(data){
+					$(data).each(function(index,cd){
+						if(id==cd.cdid){
+							$("#"+id).remove();
+						}
+					});
+				}
+			});
+			 }
+=======
+			if(confirm("确定删除吗")){
+				$.ajax({
+					url:"${pageContext.request.contextPath}/delCartDetail.do?date="+new Date().getTime(),
+					type:"get",
+					data:"id="+id,
+					dataType:"json",
+					success:function(data){
+						$(data).each(function(index,cd){
+							if(id==cd.cdid){
+								$("#"+id).remove();
+							}
+						});
+					}
+				});
+			}	
+			checkYS();
+>>>>>>> .r41
+			$.ajax({
+				url:"${pageContext.request.contextPath}/queryPriceAndNum.do?date="+new Date().getTime(),
+				type:"get",
+				data:"id="+id,
+				dataType:"json",
+				success:function(data){
+					$("#detailNum").html(data.detailnum);
+				}
+			});
+			checkYS();
+		}
+	</script>
+	<script type="text/javascript">
+		function addCartBnum(id){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/addCartBnum.do?date="+new Date().getTime(),
+				type:"get",
+				data:"id="+id,
+				dataType:"json",
+				success:function(data){
+					$("#inp"+data.cdid).val(data.bnum);
+				}
+			});
+			checkYS();
+			$.ajax({
+				url:"${pageContext.request.contextPath}/queryPriceAndNum.do?date="+new Date().getTime(),
+				type:"get",
+				data:"id="+id,
+				dataType:"json",
+				success:function(data){
+					$("#detailNum").html(data.detailnum);
+				}
+			});
+		}
+	</script>
+	<script type="text/javascript">
+		function decreaseCartBnum(id){
+				$.ajax({
+					url:"${pageContext.request.contextPath}/decreaseCartBnum.do?date="+new Date().getTime(),
+					type:"get",
+					data:"id="+id,
+					dataType:"json",
+					success:function(data){
+						$("#inp"+data.cdid).val(data.bnum);
+					}
+				});
+				checkYS();
+				$.ajax({
+					url:"${pageContext.request.contextPath}/queryPriceAndNum.do?date="+new Date().getTime(),
+					type:"get",
+					data:"id="+id,
+					dataType:"json",
+					success:function(data){
+						$("#detailNum").html(data.detailnum);
+					}
+				});
+			}
+	</script>
+</body>
+</html>
