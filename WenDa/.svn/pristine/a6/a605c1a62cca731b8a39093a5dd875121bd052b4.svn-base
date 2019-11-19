@@ -1,0 +1,46 @@
+package com.neuedu.service;
+
+import java.util.List;
+
+import com.neuedu.dao.QuestionDao;
+import com.neuedu.domain.Collection;
+import com.neuedu.domain.Question;
+import com.neuedu.domain.Users;
+
+public class QuestionService {
+private static QuestionService questionService;
+private QuestionDao questionDao=QuestionDao.getInstance();
+	private QuestionService() {
+		
+	}
+	public static QuestionService getInstance() {
+		if(questionService==null) {
+			questionService=new QuestionService();
+		}
+		return questionService;
+	}
+	public List<Question> findAllQuestion() {
+		return questionDao.findAllQuestion();
+	}
+	public void sendQuestion(String title, String content, int reward,int id) {
+		questionDao.sendQuestion(title,content,reward,id);
+	}
+	public List<Question> findMyQuestion(int id) {
+		return questionDao.findMyQuestion(id);
+	}
+
+	public Question findquestion(int id){
+		return questionDao.findquestion(id);
+	}
+	public void delquestion(int id) {
+		questionDao.delquestion(id);
+	}
+	public void collections(Collection collection) {
+		questionDao.collections(collection);
+	}
+	public boolean ifCollect(Collection collection) {
+		return questionDao.ifCollection(collection);
+	}
+
+}
+

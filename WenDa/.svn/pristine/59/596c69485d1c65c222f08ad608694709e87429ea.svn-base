@@ -1,0 +1,28 @@
+package com.neuedu.domain;
+
+public class Collection {
+      private int uid;
+      private int qid;
+	public Collection() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Collection(int uid, int qid) {
+		super();
+		this.uid = uid;
+		this.qid = qid;
+	}
+	public int getUid() {
+		return uid;
+	}
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
+	public int getQid() {
+		return qid;
+	}
+	public void setQid(int qid) {
+		this.qid = qid;
+	}
+      
+}

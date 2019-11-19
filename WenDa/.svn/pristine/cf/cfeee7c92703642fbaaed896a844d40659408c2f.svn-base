@@ -1,0 +1,206 @@
+package com.neuedu.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import com.neuedu.domain.Collection;
+import com.neuedu.domain.Question;
+import com.neuedu.domain.Users;
+import com.neuedu.util.DBUtil;
+
+public class QuestionDao {
+	public static void main(String[] args) {
+		
+	}
+private static QuestionDao questionDao;
+private QuestionDao() {
+	
+}
+public static QuestionDao getInstance() {
+	if(questionDao==null) {
+		questionDao=new QuestionDao();
+	}
+	return questionDao;
+}
+/**
+ * 查找所有问题
+ * @return
+ */
+public List<Question> findAllQuestion() {
+	Connection conn=null;
+	PreparedStatement stmt=null;
+	ResultSet rs=null;
+	try {
+		conn =DBUtil.getConnection();
+		stmt=conn.prepareStatement("select q.id,q.title,q.content,q.reward,q.visit,q.anum,u.username from question q,users u where q.u_id=u.id order by q.id desc ");
+		rs=stmt.executeQuery();
+		List<Question> list=new ArrayList<Question>();
+		while(rs.next()) {
+			Users user=new Users();
+			user.setUsername(rs.getString("username"));
+			Question question=new Question();
+			question.setId(rs.getInt("id"));
+			question.setTitle(rs.getString("title"));
+			question.setContent(rs.getString("content"));
+			question.setReward(rs.getInt("reward"));
+			question.setVisit(rs.getInt("visit"));
+			question.setAnum(rs.getInt("anum"));
+			question.setUsers(user);
+			list.add(question);
+		}
+		return list;
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}finally {
+		DBUtil.close(conn, stmt,rs);
+	}
+	
+	return null;
+}
+
+
+
+	public void sendQuestion(String title, String content, int reward, int id) {
+				Connection con = null;
+				PreparedStatement ps = null;
+				String sql = "insert into question(id,title,content,reward,u_id,time) values(users_seq.nextval,?,?,?,?,sysDate)";
+				try {
+					con = DriverManager.getConnection("jdbc:oracle:thin:@10.25.164.136:1521:orcl", "scott", "cting");
+					ps=con.prepareStatement(sql);
+					ps.setString(1, title);
+					ps.setString(2, content);
+					ps.setInt(3, reward);
+					ps.setInt(4, id);
+					
+					ps.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				finally{
+					try {
+						ps.close();
+						con.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+
+		
+	}
+	public Question findquestion(int id){
+		Connection con = null;
+		PreparedStatement ps = null;
+		Question que=null;
+		String sql="select q.id,q.title,q.content,q.time,u.username from question q,users u where q.u_id=u.id and q.id=?";
+		ResultSet rs=null;
+		try {
+			con = DriverManager.getConnection("jdbc:oracle:thin:@10.25.164.136:1521:orcl", "scott", "cting");
+			ps=con.prepareStatement(sql);
+			ps.setInt(1, id);
+			rs=ps.executeQuery();
+			if(rs.next()){
+				Users user=new Users();
+				que=new Question();
+				user.setUsername(rs.getString("username"));
+				que.setTitle(rs.getString("title"));
+				que.setContent(rs.getString("content"));
+				que.setTime(rs.getDate("time"));
+				que.setUser(user);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(con, ps,rs);
+		}
+		return que;
+	}
+	public void delquestion(int id) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			con = DBUtil.getConnection();
+			ps=con.prepareStatement("delete from question where id=?");
+			ps.setInt(1, id);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(con, ps);
+		}
+
+	}
+	public List<Question> findMyQuestion(int id) {
+		Connection conn=null;
+		PreparedStatement stmt=null;
+		ResultSet rs=null;
+		try {
+			conn=DBUtil.getConnection();
+			stmt=conn.prepareStatement("select q.id,q.title,q.content,q.reward,q.anum,q.visit,u.username from question q,users u where q.u_id=u.id and u.id=?");
+			stmt.setInt(1, id);
+			rs=stmt.executeQuery();
+			List<Question> list=new ArrayList<Question>();
+			while(rs.next()) {
+				Users user=new Users();
+				user.setUsername(rs.getString("username"));
+				Question question=new Question();
+				question.setId(rs.getInt("id"));
+				question.setTitle(rs.getString("title"));
+				question.setContent(rs.getString("content"));
+				question.setReward(rs.getInt("reward"));
+				question.setVisit(rs.getInt("visit"));
+				question.setAnum(rs.getInt("anum"));
+				question.setUsers(user);
+				list.add(question);
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			DBUtil.close(conn, stmt, rs);
+		}
+		return null;
+	}
+	public void collections(Collection collection) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		String sql = "insert into collection (id,u_id,q_id) values(collection_seq.nextval,?,?)";
+		try {
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@10.25.164.136:1521:orcl", "scott", "cting");
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1,collection.getUid());
+		    stmt.setInt(2,collection.getQid());
+		    stmt.executeUpdate();
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public boolean ifCollection(Collection collection) {
+				Connection conn = null;
+				PreparedStatement stmt = null;
+				boolean a = false;
+				ResultSet rs=null;
+				String sql = "select * from collection where u_id = ? and q_id = ?";
+				try {
+					conn = DriverManager.getConnection("jdbc:oracle:thin:@10.25.164.136:1521:orcl", "scott", "cting");
+					stmt = conn.prepareStatement(sql);
+					stmt.setInt(1,collection.getUid());
+				    stmt.setInt(2,collection.getQid());
+				    rs =stmt.executeQuery();
+				    if(rs.next()){
+				    	a = true;
+				    }
+				 
+				
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return a;
+	}
+
+}
